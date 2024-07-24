@@ -4,6 +4,10 @@ Github repository for introduction task to Space Concordia
 
 In this project, a ros2 workspace will be created alongside a custom package that will hold the publisher and subscriber nodes. The subscriber node will be written in C++ while the publisher node will be written in Python.
 
+### What it does
+
+This package allows you to set a custom parameter string that will be published letter by letter to the console.
+
 ### Installation
 
 #### Build the package
