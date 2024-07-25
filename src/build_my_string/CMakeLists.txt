@@ -45,7 +45,7 @@ endif()
 
 install(TARGETS
   publisher
-  DESTINATION ${PROJECT_NAME}
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
