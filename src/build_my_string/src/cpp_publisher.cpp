@@ -124,11 +124,11 @@ class MessagePublisher : public rclcpp::Node
       print_player();
 
       // Set message to be published
-      // auto user_msg = build_my_string::msg::Message();
-      // user_msg.message = input_message;
+      auto user_msg = build_my_string::msg::Message();
+      user_msg.message = input_message;
 
       // Publish message
-      // RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_inp_msg.c_str(), user_msg.message.c_str(), this->count_);
+      RCLCPP_INFO(this->get_logger(), "Building: %s. [frame: %zu]", user_msg.message.c_str(), this->count_);
     }
 
     // Function to print player layer
@@ -235,6 +235,7 @@ class MessagePublisher : public rclcpp::Node
         loop++;
       }
 
+      // Interchange eyes based on loop time
       if (loop % 10 == 0) {
         eyes = 'o';
       } else if (loop % 5 == 0) {
@@ -242,6 +243,12 @@ class MessagePublisher : public rclcpp::Node
       }
 
       RCLCPP_INFO(this->get_logger(), dance_layer.c_str());
+
+      // Set message to be published
+      auto user_msg = build_my_string::msg::Message();
+      user_msg.message = input_message;
+      
+      RCLCPP_INFO(this->get_logger(), "I finished building your string ['%s']. Dance party!  [frame: %zu]", user_msg.message.c_str(), this->count_);
     }
 
     void reset()
