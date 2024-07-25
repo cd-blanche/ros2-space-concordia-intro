@@ -36,7 +36,7 @@ class MessagePublisher : public rclcpp::Node
 
       // Create repeating loop that calls timer_callback() every x ms
       timer_ = this->create_wall_timer(
-        500ms, std::bind(&MessagePublisher::timer_callback, this)
+        100ms, std::bind(&MessagePublisher::timer_callback, this)
       );
     }
 
