@@ -26,8 +26,8 @@ class MessagePublisher : public rclcpp::Node
       auto message = build_my_string::msg::Message();
       // message.message = user_message;
       message.message = "hello";
-      // this->count_++;
-      RCLCPP_INFO(this->get_logger(), "Publishing: %s", message.message.c_str());
+      this->count_++;
+      RCLCPP_INFO(this->get_logger(), "Publishing: %s. [%zu]", message.message.c_str(), this->count_);
     }
     rclcpp::Publisher<build_my_string::msg::Message>::SharedPtr publisher_;
     rclcpp::TimerBase::SharedPtr timer_;
