@@ -29,7 +29,7 @@ class MessagePublisher : public rclcpp::Node
       cached_str = "Hello world!";
 
       // Initialize base layer
-      set_base_w();
+      set_base_width();
 
       // Create publisher
       publisher_ = this->create_publisher<build_my_string::msg::Message>("topic", 10);
@@ -57,8 +57,8 @@ class MessagePublisher : public rclcpp::Node
       if (base_width != cached_base_width) {
         cached_base_width = base_width;
         count_ = 0;
-        base_str = "";
-        set_base_w();
+        base_layer = "";
+        set_base_width();
       }
       if (base_height != cached_base_height) {
         cached_base_height = base_height;
@@ -90,7 +90,7 @@ class MessagePublisher : public rclcpp::Node
     PlayerDirection playerDirection;
     int cached_base_width;
     int cached_base_height;
-    std::string base_str;
+    std::string base_layer;
     std::string cached_str;
 
     // todo Function to build output
@@ -113,26 +113,26 @@ class MessagePublisher : public rclcpp::Node
     // Function to print player layer
     void print_player()
     {
-      std::string player_str = base_str;
+      std::string player_layer = base_layer;
 
       // Increment based on direction player is moving
       if (playerDirection == RIGHT) {
-        player_str[playerPos] = '(';
-        player_str[playerPos + 1] = '>';
-        player_str[playerPos + 2] = 'o';
-        player_str[playerPos + 3] = '_';
-        player_str[playerPos + 4] = 'o';
-        player_str[playerPos + 5] = ')';
-        player_str[playerPos + 6] = '>';
+        player_layer[playerPos] = '(';
+        player_layer[playerPos + 1] = '>';
+        player_layer[playerPos + 2] = 'o';
+        player_layer[playerPos + 3] = '_';
+        player_layer[playerPos + 4] = 'o';
+        player_layer[playerPos + 5] = ')';
+        player_layer[playerPos + 6] = '>';
         playerPos++;
       } else if (playerDirection == LEFT) {
-        player_str[playerPos] = '<';
-        player_str[playerPos + 1] = '(';
-        player_str[playerPos + 2] = 'o';
-        player_str[playerPos + 3] = '_';
-        player_str[playerPos + 4] = 'o';
-        player_str[playerPos + 5] = '<';
-        player_str[playerPos + 6] = ')';
+        player_layer[playerPos] = '<';
+        player_layer[playerPos + 1] = '(';
+        player_layer[playerPos + 2] = 'o';
+        player_layer[playerPos + 3] = '_';
+        player_layer[playerPos + 4] = 'o';
+        player_layer[playerPos + 5] = '<';
+        player_layer[playerPos + 6] = ')';
         playerPos--;
       }
 
@@ -143,7 +143,7 @@ class MessagePublisher : public rclcpp::Node
         playerDirection = RIGHT;
       }
 
-      RCLCPP_INFO(this->get_logger(), player_str.c_str());
+      RCLCPP_INFO(this->get_logger(), player_layer.c_str());
     }
 
     // Function to print base layer
@@ -151,16 +151,16 @@ class MessagePublisher : public rclcpp::Node
     {
       for (int i = 0; i < base_height; i++)
       {
-        RCLCPP_INFO(this->get_logger(), base_str.c_str());
+        RCLCPP_INFO(this->get_logger(), base_layer.c_str());
       }
     }
 
     // Function to set base width
-    void set_base_w()
+    void set_base_width()
     {
       for (int i = 0; i < base_width; i++)
       {
-        base_str += ".";
+        base_layer += ".";
       }
     }
 };
