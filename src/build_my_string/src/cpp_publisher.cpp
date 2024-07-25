@@ -117,6 +117,7 @@ class MessagePublisher : public rclcpp::Node
 
       // Increment based on direction player is moving
       if (playerDirection == RIGHT) {
+        playerPos++;
         player_layer[playerPos] = '(';
         player_layer[playerPos + 1] = '>';
         player_layer[playerPos + 2] = 'o';
@@ -124,8 +125,8 @@ class MessagePublisher : public rclcpp::Node
         player_layer[playerPos + 4] = 'o';
         player_layer[playerPos + 5] = ')';
         player_layer[playerPos + 6] = '>';
-        playerPos++;
       } else if (playerDirection == LEFT) {
+        playerPos--;
         player_layer[playerPos] = '<';
         player_layer[playerPos + 1] = '(';
         player_layer[playerPos + 2] = 'o';
@@ -133,7 +134,6 @@ class MessagePublisher : public rclcpp::Node
         player_layer[playerPos + 4] = 'o';
         player_layer[playerPos + 5] = '<';
         player_layer[playerPos + 6] = ')';
-        playerPos--;
       }
 
       // Once player reaches far end of the base, reverse direction
