@@ -15,7 +15,9 @@ class MessagePublisher : public rclcpp::Node
       Node("message_publisher"),
       count_(0),
       base_width(20),
-      base_height(40)
+      base_height(40),
+      playerPos(0),
+      playerDirection(RIGHT)
     {
       // Initialize custom parameters
       this->declare_parameter("message", "Hello world!");
@@ -75,10 +77,17 @@ class MessagePublisher : public rclcpp::Node
     rclcpp::TimerBase::SharedPtr timer_;
 
     // todo Add variables to keep track of build progress
+    enum PlayerDirection {
+      LEFT,
+      RIGHT
+    };
+
     size_t count_;
 
     int base_width;
     int base_height;
+    int playerPos;
+    PlayerDirection playerDirection;
     int cached_base_width;
     int cached_base_height;
     std::string base_str;
@@ -105,14 +114,34 @@ class MessagePublisher : public rclcpp::Node
     void print_player()
     {
       std::string player_str = base_str;
-      player_str[0] = '(';
-      player_str[1] = '>';
-      player_str[2] = 'o';
-      player_str[3] = '_';
-      player_str[4] = 'o';
-      player_str[5] = ')';
-      player_str[6] = '>';
 
+      // Increment based on direction player is moving
+      if (playerDirection == RIGHT) {
+        player_str[playerPos] = '(';
+        player_str[playerPos + 1] = '>';
+        player_str[playerPos + 2] = 'o';
+        player_str[playerPos + 3] = '_';
+        player_str[playerPos + 4] = 'o';
+        player_str[playerPos + 5] = ')';
+        player_str[playerPos + 6] = '>';
+        playerPos++;
+      } else if (playerDirection == LEFT) {
+        player_str[playerPos] = '<';
+        player_str[playerPos + 1] = '(';
+        player_str[playerPos + 2] = 'o';
+        player_str[playerPos + 3] = '_';
+        player_str[playerPos + 4] = 'o';
+        player_str[playerPos + 5] = '<';
+        player_str[playerPos + 6] = ')';
+        playerPos--;
+      }
+
+      // Once player reaches far end of the base, reverse direction
+      if (playerPos == base_width - 7) {
+        playerDirection = LEFT;
+      } else if (playerPos == 0) {
+        playerDirection = RIGHT;
+      }
 
       RCLCPP_INFO(this->get_logger(), player_str.c_str());
     }
