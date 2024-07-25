@@ -7,14 +7,29 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
+# RCLCPP
+find_package(rclcpp REQUIRED)
+add_executable(publisher src/cpp_publisher.cpp)
+ament_target_dependencies(publisher rclcpp)
+
+# For custom types and interfaces
+find_package(rosidl_default_generators REQUIRED)
+set(msg_files
   "msg/Message.msg"
 )
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+)
+ament_export_dependencies(rosidl_default_runtime)
+
+# Link against the interface
+rosidl_get_typesupport_target(cpp_typesupport_target
+  ${PROJECT_NAME} rosidl_typesupport_cpp)
+
+  target_link_libraries(publisher "${cpp_typesupport_target}")
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -27,5 +42,10 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(TARGETS
+  publisher
+  DESTINATION ${PROJECT_NAME}
+)
 
 ament_package()
