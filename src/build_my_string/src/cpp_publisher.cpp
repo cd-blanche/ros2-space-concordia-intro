@@ -14,7 +14,7 @@ class MessagePublisher : public rclcpp::Node
     MessagePublisher()
     : Node("message_publisher"), count_(0)
     {
-      this->declare_parameter("user_message", "Hello world!");
+      this->declare_parameter("message", "Hello world!");
       publisher_ = this->create_publisher<build_my_string::msg::Message>("topic", 10);
       timer_ = this->create_wall_timer(
         500ms, std::bind(&MessagePublisher::timer_callback, this)
@@ -23,11 +23,11 @@ class MessagePublisher : public rclcpp::Node
   private:
     void timer_callback()
     {
-      std::string user_message = this->get_parameter("user_message").as_string();
-      auto message = build_my_string::msg::Message();
-      message.message = user_message;
+      std::string message = this->get_parameter("message").as_string();
+      auto user_msg = build_my_string::msg::Message();
+      user_msg.message = message;
       this->count_++;
-      RCLCPP_INFO(this->get_logger(), "Publishing: %s. [%zu]", message.message.c_str(), this->count_);
+      RCLCPP_INFO(this->get_logger(), "Publishing: %s. [%zu]", user_msg.message.c_str(), this->count_);
     }
     rclcpp::Publisher<build_my_string::msg::Message>::SharedPtr publisher_;
     rclcpp::TimerBase::SharedPtr timer_;
