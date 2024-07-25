@@ -64,7 +64,7 @@ class MessagePublisher : public rclcpp::Node
       }
 
       // Print output
-      print_output(message);
+      print_output();
 
       // Increase current count
       this->count_++;
@@ -85,17 +85,36 @@ class MessagePublisher : public rclcpp::Node
     std::string cached_str;
 
     // todo Function to build output
-    void print_output(const std::string message)
+    void print_output()
     {
       // Print base layer
       print_base();
 
+      // Print player
+      print_player();
+
       // Set message to be published
-      auto user_msg = build_my_string::msg::Message();
-      user_msg.message = message;
+      // auto user_msg = build_my_string::msg::Message();
+      // user_msg.message = message;
 
       // Publish message
-      RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_str.c_str(), user_msg.message.c_str(), this->count_);
+      // RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_str.c_str(), user_msg.message.c_str(), this->count_);
+    }
+
+    // Function to print player layer
+    void print_player()
+    {
+      std::string player_str = base_str;
+      player_str[0] = '(';
+      player_str[1] = '>';
+      player_str[2] = 'o';
+      player_str[3] = '_';
+      player_str[4] = 'o';
+      player_str[5] = ')';
+      player_str[6] = '>';
+
+
+      RCLCPP_INFO(this->get_logger(), player_str.c_str());
     }
 
     // Function to print base layer
