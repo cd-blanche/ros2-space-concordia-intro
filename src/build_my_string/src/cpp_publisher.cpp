@@ -26,7 +26,7 @@ class MessagePublisher : public rclcpp::Node
 
       cached_base_width = base_width;
       cached_base_height = base_height;
-      cached_str = "Hello world!";
+      cached_inp_msg = "Hello world!";
 
       // Initialize base layer
       set_base_width();
@@ -50,8 +50,8 @@ class MessagePublisher : public rclcpp::Node
       this->get_parameter("base_h", base_height);
 
       // Check to see if param still matches cached string
-      if (input_message != cached_str) {
-        cached_str = input_message;
+      if (input_message != cached_inp_msg) {
+        cached_inp_msg = input_message;
         count_ = 0; // Reset build count
       }
       if (base_width != cached_base_width) {
@@ -97,7 +97,7 @@ class MessagePublisher : public rclcpp::Node
 
     // message input
     std::string input_message;
-    std::string cached_str;
+    std::string cached_inp_msg;
 
     // todo Function to build output
     void print_output()
@@ -113,7 +113,7 @@ class MessagePublisher : public rclcpp::Node
       user_msg.message = input_message;
 
       // Publish message
-      RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_str.c_str(), user_msg.message.c_str(), this->count_);
+      RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_inp_msg.c_str(), user_msg.message.c_str(), this->count_);
     }
 
     // Function to print player layer
