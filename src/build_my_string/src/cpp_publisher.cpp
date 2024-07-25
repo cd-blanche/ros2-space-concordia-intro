@@ -128,7 +128,7 @@ class MessagePublisher : public rclcpp::Node
       user_msg.message = input_message;
 
       // Publish message
-      RCLCPP_INFO(this->get_logger(), "Building: %s. [frame: %zu]", user_msg.message.c_str(), this->count_);
+      RCLCPP_INFO(this->get_logger(), "Building ['%s']. [frame: %zu]", user_msg.message.c_str(), this->count_);
     }
 
     // Function to print player layer
@@ -240,6 +240,8 @@ class MessagePublisher : public rclcpp::Node
         eyes = 'o';
       } else if (loop % 5 == 0) {
         eyes = '^';
+      } else if (loop % 3 == 0) {
+        eyes = 'w';
       }
 
       RCLCPP_INFO(this->get_logger(), dance_layer.c_str());
