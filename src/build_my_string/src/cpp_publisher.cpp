@@ -45,13 +45,13 @@ class MessagePublisher : public rclcpp::Node
     void timer_callback()
     {
       // Get parameters
-      std::string message = this->get_parameter("message").as_string();
+      this->get_parameter("message", input_message);
       this->get_parameter("base_w", base_width);
       this->get_parameter("base_h", base_height);
 
       // Check to see if param still matches cached string
-      if (message != cached_str) {
-        cached_str = message;
+      if (input_message != cached_str) {
+        cached_str = input_message;
         count_ = 0; // Reset build count
       }
       if (base_width != cached_base_width) {
@@ -84,13 +84,19 @@ class MessagePublisher : public rclcpp::Node
 
     size_t count_;
 
+    // base layer
     int base_width;
     int base_height;
-    int playerPos;
-    PlayerDirection playerDirection;
+    std::string base_layer;
     int cached_base_width;
     int cached_base_height;
-    std::string base_layer;
+
+    // player layer
+    int playerPos;
+    PlayerDirection playerDirection;
+
+    // message input
+    std::string input_message;
     std::string cached_str;
 
     // todo Function to build output
@@ -103,11 +109,11 @@ class MessagePublisher : public rclcpp::Node
       print_player();
 
       // Set message to be published
-      // auto user_msg = build_my_string::msg::Message();
-      // user_msg.message = message;
+      auto user_msg = build_my_string::msg::Message();
+      user_msg.message = input_message;
 
       // Publish message
-      // RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_str.c_str(), user_msg.message.c_str(), this->count_);
+      RCLCPP_INFO(this->get_logger(), "[cache: %s] Publishing: %s. [%zu]", cached_str.c_str(), user_msg.message.c_str(), this->count_);
     }
 
     // Function to print player layer
@@ -125,6 +131,7 @@ class MessagePublisher : public rclcpp::Node
         player_layer[playerPos + 4] = 'o';
         player_layer[playerPos + 5] = ')';
         player_layer[playerPos + 6] = '>';
+        // player_layer[playerPos + 7] = 'a';
       } else if (playerDirection == LEFT) {
         playerPos--;
         player_layer[playerPos] = '<';
