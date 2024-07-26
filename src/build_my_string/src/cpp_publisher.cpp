@@ -23,14 +23,14 @@ class MessagePublisher : public rclcpp::Node
       eyes('o')
     {
       // Initialize custom parameters
-      this->declare_parameter("message", "Hi!");
+      this->declare_parameter("message", "Hello world!");
       this->declare_parameter("base_w", base_width);
       this->declare_parameter("base_h", base_height);
 
       // Set cached var for timer callback to change and reset on change
       cached_base_width = base_width;
       cached_base_height = base_height;
-      cached_inp_msg = "Hi!";
+      cached_inp_msg = "Hello world!";
 
       // Initialize base layer
       set_base_width();
@@ -40,7 +40,7 @@ class MessagePublisher : public rclcpp::Node
 
       // Create repeating loop that calls timer_callback() every x ms
       timer_ = this->create_wall_timer(
-        100ms, std::bind(&MessagePublisher::timer_callback, this)
+        100ms, std::bind(&MessagePublisher::timer_callback, this) // here you can set and adjust the frequency // "frame rate"
       );
     }
 

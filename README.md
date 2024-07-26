@@ -62,7 +62,7 @@ To set any of these parameters, open a new terminal and run any of the following
 
 ##### Message
 
-Message allows you to change the string that is being built. Make sure to add double quotes `""` when inputing a new string.
+Message allows you to change the string that is being built. Make sure to add double quotes `""` when inputing a new string. Default is "Hello world!".
 
 `$ ros2 param set /message_publisher message "<your_string_here>"`
 
