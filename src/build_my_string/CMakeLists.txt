@@ -9,6 +9,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 
+# RCLPY
+find_package(rclpy REQUIRED)
+
 # RCLCPP
 find_package(rclcpp REQUIRED)
 add_executable(publisher src/cpp_publisher.cpp)
@@ -30,6 +33,7 @@ rosidl_get_typesupport_target(cpp_typesupport_target
 
   target_link_libraries(publisher "${cpp_typesupport_target}")
 
+#  ament_python_install_package(${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -45,6 +49,11 @@ endif()
 
 install(TARGETS
   publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  scripts/py_subscriber.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

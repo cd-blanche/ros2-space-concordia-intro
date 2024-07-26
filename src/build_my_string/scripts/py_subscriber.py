@@ -10,14 +10,14 @@ class MessageSubscriber(Node):
     super().__init__('message_subscriber')
     self.subscription = self.create_subscription(
       Message,
-      'topic',
+      'message_publisher',
       self.listener_callback,
       10
     )
     self.subscription
 
   def listener_callback(self, msg):
-    self.get_logger().info('hearing: "%s"' % msg.data)
+    self.get_logger().info('hearing: "%s"' % msg.message)
 
 
 def main(args=None):
