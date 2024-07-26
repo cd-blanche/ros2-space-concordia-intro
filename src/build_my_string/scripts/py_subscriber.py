@@ -10,7 +10,7 @@ class MessageSubscriber(Node):
     super().__init__('message_subscriber')
     self.subscription = self.create_subscription(
       Message,
-      'message_publisher',
+      'build_my_string',
       self.listener_callback,
       10
     )

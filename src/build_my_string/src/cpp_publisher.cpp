@@ -12,7 +12,7 @@ class MessagePublisher : public rclcpp::Node
 {
   public:
     MessagePublisher() :
-      Node("message_publisher"),
+      Node("build_my_string"),
       count_(0),
       base_width(20),
       base_height(40),
@@ -36,7 +36,7 @@ class MessagePublisher : public rclcpp::Node
       set_base_width();
 
       // Create publisher
-      publisher_ = this->create_publisher<build_my_string::msg::Message>("message_publisher", 10);
+      publisher_ = this->create_publisher<build_my_string::msg::Message>("build_my_string", 10);
 
       // Create repeating loop that calls timer_callback() every x ms
       timer_ = this->create_wall_timer(
