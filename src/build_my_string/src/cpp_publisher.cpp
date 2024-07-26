@@ -29,17 +29,17 @@ class MessagePublisher : public rclcpp::Node
 
       cached_base_width = base_width;
       cached_base_height = base_height;
-      cached_inp_msg = "Hello world!";
+      cached_inp_msg = "Hi!";
 
       // Initialize base layer
       set_base_width();
 
       // Create publisher
-      publisher_ = this->create_publisher<build_my_string::msg::Message>("topic", 10);
+      publisher_ = this->create_publisher<build_my_string::msg::Message>("message_publisher", 10);
 
       // Create repeating loop that calls timer_callback() every x ms
       timer_ = this->create_wall_timer(
-        50ms, std::bind(&MessagePublisher::timer_callback, this)
+        100ms, std::bind(&MessagePublisher::timer_callback, this)
       );
     }
 
@@ -68,6 +68,8 @@ class MessagePublisher : public rclcpp::Node
         reset();
       }
 
+      output_message.clear();
+
       if (curr_msg_pos < input_message.length()) {        // Print output
         print_output();
       } else {
@@ -75,6 +77,14 @@ class MessagePublisher : public rclcpp::Node
         celebrate();
       }
       
+
+      // Set message and publish
+      auto user_msg = build_my_string::msg::Message();
+      user_msg.message = output_message;
+      publisher_->publish(user_msg);
+
+
+      RCLCPP_INFO(this->get_logger(), user_msg.message.c_str());
 
 
       // Increase current count
@@ -108,6 +118,7 @@ class MessagePublisher : public rclcpp::Node
     // message input
     std::string input_message;
     std::string cached_inp_msg;
+    std::string output_message;
     size_t curr_msg_pos;
 
     // celebration
@@ -123,12 +134,7 @@ class MessagePublisher : public rclcpp::Node
       // Print player
       print_player();
 
-      // Set message to be published
-      auto user_msg = build_my_string::msg::Message();
-      user_msg.message = input_message;
-
-      // Publish message
-      RCLCPP_INFO(this->get_logger(), "Building ['%s']. [frame: %zu]", user_msg.message.c_str(), this->count_);
+      output_message += "Building: ["+input_message+"].\n";
     }
 
     // Function to print player layer
@@ -170,7 +176,7 @@ class MessagePublisher : public rclcpp::Node
         playerDirection = RIGHT;
       }
 
-      RCLCPP_INFO(this->get_logger(), curr_layer.c_str());
+      output_message += curr_layer + '\n';
     }
 
     // Function to print base layer
@@ -178,7 +184,7 @@ class MessagePublisher : public rclcpp::Node
     {
       for (int i = 0; i < base_height; i++)
       {
-        RCLCPP_INFO(this->get_logger(), base_layer.c_str());
+        output_message += base_layer;
       }
     }
 
@@ -188,8 +194,9 @@ class MessagePublisher : public rclcpp::Node
       for (int i = 0; i < base_width; i++)
       {
         base_layer += ".";
-        player_layer = base_layer;
       }
+      player_layer = base_layer;
+      base_layer += '\n';
     }
 
     // Function to celebrate after completing string
@@ -244,13 +251,20 @@ class MessagePublisher : public rclcpp::Node
         eyes = 'w';
       }
 
-      RCLCPP_INFO(this->get_logger(), dance_layer.c_str());
+      // RCLCPP_INFO(this->get_logger(), dance_layer.c_str());
 
       // Set message to be published
-      auto user_msg = build_my_string::msg::Message();
-      user_msg.message = input_message;
+      // auto user_msg = build_my_string::msg::Message();
+      // user_msg.message = dance_layer;
+      // publisher_->publish(user_msg);
+
+      // user_msg.message = "I finished building your string [" + input_message + "]. Dance party!"; 
+      // publisher_->publish(user_msg);
+
+      output_message += dance_layer + '\n';
+      output_message += "I finished building your string [" + input_message + "]. Dance party!"; 
       
-      RCLCPP_INFO(this->get_logger(), "I finished building your string ['%s']. Dance party!  [frame: %zu]", user_msg.message.c_str(), this->count_);
+      // RCLCPP_INFO(this->get_logger(), "I finished building your string ['%s']. Dance party!  [frame: %zu]", user_msg.message.c_str(), this->count_);
     }
 
     void reset()
