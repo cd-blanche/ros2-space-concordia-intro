@@ -135,8 +135,9 @@ class MessagePublisher : public rclcpp::Node
         curr_layer[playerPos + 6] = ')';
       }
 
-      // Once player reaches far end of the base, reverse direction
-      if (playerPos == player_layer.length() - 8) {
+      // Once player reaches far end of the layer (minus body)
+      // reverse direction
+      if (playerPos == player_layer.length() - 8 && playerDirection == RIGHT) {
         playerDirection = LEFT;
         // Append next character in message and continue with next in line
         player_layer += input_message[curr_msg_pos]; 
@@ -219,16 +220,17 @@ class MessagePublisher : public rclcpp::Node
     // Function to reset variables on param change
     void reset()
     {
-        count_ = 0;
-        curr_msg_pos = 0;
-        player_layer = base_layer;
+        set_base_width();
         playerPos = 0;
         playerDirection = RIGHT;
+        curr_msg_pos = 0;
+        loop = 0;
     }
     
     // Function to set base width
     void set_base_width()
     {
+      base_layer = "";
       for (int i = 0; i < base_width; i++)
       {
         base_layer += ".";
