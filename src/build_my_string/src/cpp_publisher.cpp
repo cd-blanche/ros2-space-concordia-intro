@@ -27,6 +27,7 @@ class MessagePublisher : public rclcpp::Node
       this->declare_parameter("base_w", base_width);
       this->declare_parameter("base_h", base_height);
 
+      // Set cached var for timer callback to change and reset on change
       cached_base_width = base_width;
       cached_base_height = base_height;
       cached_inp_msg = "Hi!";
@@ -53,6 +54,7 @@ class MessagePublisher : public rclcpp::Node
       this->get_parameter("base_h", base_height);
 
       // Check to see if param still matches cached string
+      // otherwise reset progress
       if (input_message != cached_inp_msg) {
         cached_inp_msg = input_message;
         reset();
@@ -68,6 +70,7 @@ class MessagePublisher : public rclcpp::Node
         reset();
       }
 
+      // Rest output on each callback
       output_message.clear();
 
       if (curr_msg_pos < input_message.length()) {        // Print output
@@ -86,46 +89,11 @@ class MessagePublisher : public rclcpp::Node
 
       RCLCPP_INFO(this->get_logger(), user_msg.message.c_str());
 
-
       // Increase current count
       this->count_++;
     }
-    
-    // Publisher variables
-    rclcpp::Publisher<build_my_string::msg::Message>::SharedPtr publisher_;
-    rclcpp::TimerBase::SharedPtr timer_;
 
-    // todo Add variables to keep track of build progress
-    enum PlayerDirection {
-      LEFT,
-      RIGHT
-    };
-
-    size_t count_;
-
-    // base layer
-    int base_width;
-    int base_height;
-    std::string base_layer;
-    int cached_base_width;
-    int cached_base_height;
-
-    // player layer
-    std::string player_layer;
-    size_t playerPos;
-    PlayerDirection playerDirection;
-
-    // message input
-    std::string input_message;
-    std::string cached_inp_msg;
-    std::string output_message;
-    size_t curr_msg_pos;
-
-    // celebration
-    size_t loop;
-    char eyes;
-
-    // todo Function to build output
+    // Function to build output
     void print_output()
     {
       // Print base layer
@@ -134,7 +102,8 @@ class MessagePublisher : public rclcpp::Node
       // Print player
       print_player();
 
-      output_message += "Building: ["+input_message+"].\n";
+      output_message += 
+        "Building: ["+input_message+"]. Frame ["+std::to_string(count_)+"]"+"\n";
     }
 
     // Function to print player layer
@@ -153,7 +122,7 @@ class MessagePublisher : public rclcpp::Node
         curr_layer[playerPos + 4] = 'o';
         curr_layer[playerPos + 5] = ')';
         curr_layer[playerPos + 6] = '>';
-        // player holds the letter
+        // player holds the letter when moving towards the right
         curr_layer[playerPos + 7] = input_message[curr_msg_pos]; 
       } else if (playerDirection == LEFT) {
         playerPos--;
@@ -188,25 +157,17 @@ class MessagePublisher : public rclcpp::Node
       }
     }
 
-    // Function to set base width
-    void set_base_width()
-    {
-      for (int i = 0; i < base_width; i++)
-      {
-        base_layer += ".";
-      }
-      player_layer = base_layer;
-      base_layer += '\n';
-    }
-
-    // Function to celebrate after completing string
+    // Function to celebrate after building string
     void celebrate()
     {
       print_base();
       print_dance();
+      output_message += 
+        "I finished building your string [" + input_message + "]. Dance party!"+
+        " Frame ["+std::to_string(count_)+"]"+"\n";
     }
 
-    // Function to print dance animation
+    // Function to print dance animation when finished building
     void print_dance()
     {
       // Set current animation layer
@@ -233,8 +194,9 @@ class MessagePublisher : public rclcpp::Node
         dance_layer[playerPos + 6] = ')';
       }
 
-      // Once player reaches far end of the base, reverse direction
-      if (playerPos == player_layer.length() - 7 - input_message.length()) {
+      // Once player reaches far end of the base layer reverse direction
+      // -7 is the length of the player body - 1 for the before position
+      if (playerPos == base_layer.length() - 8) {
         playerDirection = LEFT;
         loop++;
       } else if (playerPos == 0) {
@@ -251,22 +213,10 @@ class MessagePublisher : public rclcpp::Node
         eyes = 'w';
       }
 
-      // RCLCPP_INFO(this->get_logger(), dance_layer.c_str());
-
-      // Set message to be published
-      // auto user_msg = build_my_string::msg::Message();
-      // user_msg.message = dance_layer;
-      // publisher_->publish(user_msg);
-
-      // user_msg.message = "I finished building your string [" + input_message + "]. Dance party!"; 
-      // publisher_->publish(user_msg);
-
       output_message += dance_layer + '\n';
-      output_message += "I finished building your string [" + input_message + "]. Dance party!"; 
-      
-      // RCLCPP_INFO(this->get_logger(), "I finished building your string ['%s']. Dance party!  [frame: %zu]", user_msg.message.c_str(), this->count_);
     }
 
+    // Function to reset variables on param change
     void reset()
     {
         count_ = 0;
@@ -275,6 +225,52 @@ class MessagePublisher : public rclcpp::Node
         playerPos = 0;
         playerDirection = RIGHT;
     }
+    
+    // Function to set base width
+    void set_base_width()
+    {
+      for (int i = 0; i < base_width; i++)
+      {
+        base_layer += ".";
+      }
+      player_layer = base_layer;
+      base_layer += '\n';
+    }
+
+    // VARIABLES --------------------------------------------------------------------
+    // Publisher variables
+    rclcpp::Publisher<build_my_string::msg::Message>::SharedPtr publisher_;
+    rclcpp::TimerBase::SharedPtr timer_;
+    size_t count_;
+
+    // Variables to keep track of build progress
+    enum PlayerDirection {
+      LEFT,
+      RIGHT
+    };
+
+    // base layer
+    int base_width;
+    int base_height;
+    std::string base_layer;
+    int cached_base_width;
+    int cached_base_height;
+
+    // player layer
+    std::string player_layer;
+    size_t playerPos;
+    PlayerDirection playerDirection;
+
+    // message input
+    std::string input_message;
+    std::string output_message;
+    std::string cached_inp_msg;
+    size_t curr_msg_pos;
+
+    // celebration layer
+    size_t loop;
+    char eyes;
+
 };
 
 int main(int argc, char ** argv)
