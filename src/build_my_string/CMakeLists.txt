@@ -8,12 +8,10 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
-
-# RCLPY
 find_package(rclpy REQUIRED)
-
-# RCLCPP
 find_package(rclcpp REQUIRED)
+
+# find dependencies
 add_executable(publisher src/cpp_publisher.cpp)
 ament_target_dependencies(publisher rclcpp)
 
@@ -31,8 +29,9 @@ ament_export_dependencies(rosidl_default_runtime)
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME} rosidl_typesupport_cpp)
 
-  target_link_libraries(publisher "${cpp_typesupport_target}")
+target_link_libraries(publisher "${cpp_typesupport_target}")
 
+# this doesn't seem to work
 #  ament_python_install_package(${PROJECT_NAME})
 
 if(BUILD_TESTING)
@@ -47,11 +46,13 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+# install executables
 install(TARGETS
   publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 
+# install scripts
 install(PROGRAMS
   scripts/py_subscriber.py
   DESTINATION lib/${PROJECT_NAME}
